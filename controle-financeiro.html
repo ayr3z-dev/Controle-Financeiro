@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Controle Financeiro</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #222222;
+    --border: #2e2e2e;
+    --accent: #c8f135;
+    --accent2: #ff5c5c;
+    --text: #f0f0f0;
+    --muted: #777;
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding-bottom: 90px;
+  }
+
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 20px 14px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--accent);
+  }
+
+  header p {
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 65px;
+    z-index: 99;
+  }
+
+  nav button {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 12px 8px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  nav button.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* PAGES */
+  .page { display: none; padding: 16px; }
+  .page.active { display: block; }
+
+  /* CARDS RESUMO */
+  .resumo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+  }
+
+  .card.full { grid-column: 1/-1; }
+
+  .card label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .card .valor {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .card.receita .valor { color: var(--accent); }
+  .card.despesa .valor { color: var(--accent2); }
+
+  .card.saldo .valor {
+    font-size: 1.6rem;
+  }
+
+  .card.saldo.positivo .valor { color: var(--accent); }
+  .card.saldo.negativo .valor { color: var(--accent2); }
+
+  /* GRÁFICO */
+  .grafico-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .grafico-titulo {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .barra-item {
+    margin-bottom: 10px;
+  }
+
+  .barra-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+
+  .barra-label span:last-child {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .barra-track {
+    background: var(--surface2);
+    border-radius: 99px;
+    height: 8px;
+    overflow: hidden;
+  }
+
+  .barra-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: var(--accent);
+    transition: width 0.6s ease;
+  }
+
+  .barra-fill.despesa { background: var(--accent2); }
+
+  /* MÊS SELETOR */
+  .mes-selector {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+  }
+
+  .mes-selector span {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+
+  .mes-selector button {
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 4px 10px;
+  }
+
+  /* LANÇAMENTOS LISTA */
+  .lancamento-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .lanc-info { flex: 1; }
+
+  .lanc-cat {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+    margin-bottom: 2px;
+  }
+
+  .lanc-desc {
+    font-size: 0.88rem;
+    font-weight: 500;
+  }
+
+  .lanc-data {
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .lanc-valor {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .lanc-valor.entrada { color: var(--accent); }
+  .lanc-valor.saida { color: var(--accent2); }
+
+  /* FORMULÁRIO */
+  .form-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  .form-section h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .tipo-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .tipo-btn {
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    background: none;
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .tipo-btn.entrada.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(200,241,53,0.08);
+  }
+
+  .tipo-btn.saida.active {
+    border-color: var(--accent2);
+    color: var(--accent2);
+    background: rgba(255,92,92,0.08);
+  }
+
+  .field { margin-bottom: 12px; }
+
+  .field label {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    padding: 10px 12px;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--accent);
+  }
+
+  .field select option {
+    background: var(--surface2);
+  }
+
+  .btn-salvar {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: #0f0f0f;
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: opacity 0.2s;
+  }
+
+  .btn-salvar:active { opacity: 0.8; }
+  .btn-salvar:disabled { opacity: 0.4; cursor: default; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--accent);
+    color: #0f0f0f;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    padding: 10px 20px;
+    border-radius: 99px;
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    z-index: 999;
+    white-space: nowrap;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .toast.erro {
+    background: var(--accent2);
+    color: #fff;
+  }
+
+  /* BOTTOM NAV */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding: 8px 0 16px;
+    z-index: 100;
+  }
+
+  .bottom-nav button {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 0.6rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 0;
+    transition: color 0.2s;
+  }
+
+  .bottom-nav button svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .bottom-nav button.active {
+    color: var(--accent);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  .empty-state div {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+
+  .loading {
+    text-align: center;
+    padding: 30px;
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+
+  .tag-tipo {
+    display: inline-block;
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 7px;
+    border-radius: 99px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  .tag-entrada { background: rgba(200,241,53,0.15); color: var(--accent); }
+  .tag-saida { background: rgba(255,92,92,0.15); color: var(--accent2); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>💰 Controle Financeiro</h1>
+  <p id="mes-header">Carregando...</p>
+</header>
+
+<nav>
+  <button class="active" onclick="showPage('dashboard')">Resumo</button>
+  <button onclick="showPage('lancamentos')">Lançamentos</button>
+  <button onclick="showPage('novo')">+ Novo</button>
+</nav>
+
+<!-- DASHBOARD -->
+<div id="page-dashboard" class="page active">
+  <div style="height:12px"></div>
+
+  <div class="mes-selector">
+    <button onclick="mudarMes(-1)">‹</button>
+    <span id="mes-label">—</span>
+    <button onclick="mudarMes(1)">›</button>
+  </div>
+
+  <div class="resumo-grid">
+    <div class="card receita">
+      <label>Entradas</label>
+      <div class="valor" id="total-entrada">R$ 0,00</div>
+    </div>
+    <div class="card despesa">
+      <label>Saídas</label>
+      <div class="valor" id="total-saida">R$ 0,00</div>
+    </div>
+    <div class="card saldo full" id="card-saldo">
+      <label>Saldo do Mês</label>
+      <div class="valor" id="total-saldo">R$ 0,00</div>
+    </div>
+  </div>
+
+  <div class="grafico-wrap">
+    <div class="grafico-titulo">📊 Despesas por Categoria</div>
+    <div id="grafico-despesas"><div class="loading">Carregando...</div></div>
+  </div>
+
+  <div class="grafico-wrap">
+    <div class="grafico-titulo">📈 Receitas por Categoria</div>
+    <div id="grafico-receitas"><div class="loading">Carregando...</div></div>
+  </div>
+</div>
+
+<!-- LANÇAMENTOS -->
+<div id="page-lancamentos" class="page">
+  <div style="height:12px"></div>
+
+  <div class="mes-selector">
+    <button onclick="mudarMes(-1)">‹</button>
+    <span id="mes-label2">—</span>
+    <button onclick="mudarMes(1)">›</button>
+  </div>
+
+  <div id="lista-lancamentos"><div class="loading">Carregando...</div></div>
+</div>
+
+<!-- NOVO LANÇAMENTO -->
+<div id="page-novo" class="page">
+  <div style="height:12px"></div>
+  <div class="form-section">
+    <h3>Novo Lançamento</h3>
+
+    <div class="tipo-toggle">
+      <button class="tipo-btn entrada active" onclick="setTipo('Entrada')">⬆ Entrada</button>
+      <button class="tipo-btn saida" onclick="setTipo('Saída')">⬇ Saída</button>
+    </div>
+
+    <div class="field">
+      <label>Categoria</label>
+      <select id="f-categoria">
+        <option value="">Selecione...</option>
+        <option>Receita Diária</option>
+        <option>Insumos</option>
+        <option>Salário Funcionários</option>
+        <option>Custos Fixos</option>
+        <option>Material / Reforma</option>
+        <option>Custos Administrativos</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Descrição</label>
+      <input type="text" id="f-descricao" placeholder="Ex: Pagamento fornecedor...">
+    </div>
+
+    <div class="field">
+      <label>Valor (R$)</label>
+      <input type="number" id="f-valor" placeholder="0,00" step="0.01" min="0" inputmode="decimal">
+    </div>
+
+    <div class="field">
+      <label>Data</label>
+      <input type="date" id="f-data">
+    </div>
+
+    <button class="btn-salvar" id="btn-salvar" onclick="salvar()">Salvar Lançamento</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbweir7mm6cWsopmAVZpWbTDSgIdSHvhz_KMHtF3DRxtRvAPUKzm1ctLnL30Q8Q7QbgB/exec";
+
+const MESES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+
+let dados = [];
+let tipoAtual = "Entrada";
+let mesFiltro = new Date().getMonth();
+let anoFiltro = new Date().getFullYear();
+
+// Inicializa data de hoje
+document.getElementById('f-data').value = new Date().toISOString().split('T')[0];
+
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  const idx = ['dashboard','lancamentos','novo'].indexOf(page);
+  document.querySelectorAll('nav button')[idx].classList.add('active');
+  if (page !== 'novo') renderTudo();
+}
+
+function mudarMes(d) {
+  mesFiltro += d;
+  if (mesFiltro > 11) { mesFiltro = 0; anoFiltro++; }
+  if (mesFiltro < 0) { mesFiltro = 11; anoFiltro--; }
+  renderTudo();
+}
+
+function setTipo(t) {
+  tipoAtual = t;
+  document.querySelectorAll('.tipo-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.tipo-btn.' + (t === 'Entrada' ? 'entrada' : 'saida')).classList.add('active');
+}
+
+function fmt(v) {
+  return 'R$ ' + Number(v).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function dadosMes() {
+  return dados.filter(d => {
+    if (!d.Data) return false;
+    const dt = new Date(d.Data + 'T12:00:00');
+    return dt.getMonth() === mesFiltro && dt.getFullYear() === anoFiltro;
+  });
+}
+
+function renderTudo() {
+  const label = MESES[mesFiltro] + ' ' + anoFiltro;
+  document.getElementById('mes-label').textContent = label;
+  document.getElementById('mes-label2').textContent = label;
+  document.getElementById('mes-header').textContent = label;
+
+  const mes = dadosMes();
+  const entradas = mes.filter(d => d.Tipo === 'Entrada');
+  const saidas = mes.filter(d => d.Tipo === 'Saída');
+
+  const totE = entradas.reduce((s, d) => s + Number(d.Valor || 0), 0);
+  const totS = saidas.reduce((s, d) => s + Number(d.Valor || 0), 0);
+  const saldo = totE - totS;
+
+  document.getElementById('total-entrada').textContent = fmt(totE);
+  document.getElementById('total-saida').textContent = fmt(totS);
+  document.getElementById('total-saldo').textContent = fmt(saldo);
+
+  const cardSaldo = document.getElementById('card-saldo');
+  cardSaldo.classList.remove('positivo','negativo');
+  cardSaldo.classList.add(saldo >= 0 ? 'positivo' : 'negativo');
+
+  renderGrafico('grafico-despesas', saidas, 'despesa');
+  renderGrafico('grafico-receitas', entradas, 'receita');
+  renderLista(mes);
+}
+
+function renderGrafico(elId, items, tipo) {
+  const el = document.getElementById(elId);
+  if (!items.length) {
+    el.innerHTML = '<div class="empty-state"><div>📭</div>Nenhum registro</div>';
+    return;
+  }
+
+  const soma = {};
+  items.forEach(d => {
+    const cat = d.Categoria || 'Outros';
+    soma[cat] = (soma[cat] || 0) + Number(d.Valor || 0);
+  });
+
+  const max = Math.max(...Object.values(soma));
+  const sorted = Object.entries(soma).sort((a,b) => b[1]-a[1]);
+
+  el.innerHTML = sorted.map(([cat, val]) => `
+    <div class="barra-item">
+      <div class="barra-label">
+        <span>${cat}</span>
+        <span>${fmt(val)}</span>
+      </div>
+      <div class="barra-track">
+        <div class="barra-fill ${tipo}" style="width:${(val/max*100).toFixed(1)}%"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderLista(mes) {
+  const el = document.getElementById('lista-lancamentos');
+  if (!mes.length) {
+    el.innerHTML = '<div class="empty-state"><div>📭</div>Nenhum lançamento neste mês</div>';
+    return;
+  }
+
+  const sorted = [...mes].sort((a,b) => new Date(b.Data) - new Date(a.Data));
+  el.innerHTML = sorted.map(d => {
+    const dt = new Date(d.Data + 'T12:00:00');
+    const dataFmt = dt.toLocaleDateString('pt-BR');
+    const isEntrada = d.Tipo === 'Entrada';
+    return `
+    <div class="lancamento-item">
+      <div class="lanc-info">
+        <div class="lanc-cat">${d.Categoria || '—'}
+          <span class="tag-tipo ${isEntrada ? 'tag-entrada' : 'tag-saida'}">${d.Tipo}</span>
+        </div>
+        <div class="lanc-desc">${d.Descricao || '—'}</div>
+        <div class="lanc-data">${dataFmt}</div>
+      </div>
+      <div class="lanc-valor ${isEntrada ? 'entrada' : 'saida'}">${fmt(d.Valor)}</div>
+    </div>`;
+  }).join('');
+}
+
+function showToast(msg, erro = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (erro ? ' erro' : '');
+  setTimeout(() => t.className = 'toast', 2500);
+}
+
+async function carregar() {
+  try {
+    const res = await fetch(SCRIPT_URL);
+    const json = await res.json();
+    dados = Array.isArray(json) ? json : [];
+    renderTudo();
+  } catch(e) {
+    showToast('Erro ao carregar dados', true);
+  }
+}
+
+async function salvar() {
+  const categoria = document.getElementById('f-categoria').value;
+  const descricao = document.getElementById('f-descricao').value.trim();
+  const valor = parseFloat(document.getElementById('f-valor').value);
+  const data = document.getElementById('f-data').value;
+
+  if (!categoria) return showToast('Selecione uma categoria', true);
+  if (!descricao) return showToast('Informe uma descrição', true);
+  if (!valor || valor <= 0) return showToast('Informe um valor válido', true);
+  if (!data) return showToast('Informe a data', true);
+
+  const btn = document.getElementById('btn-salvar');
+  btn.disabled = true;
+  btn.textContent = 'Salvando...';
+
+  const payload = {
+    action: 'add',
+    id: Date.now().toString(),
+    data: data,
+    tipo: tipoAtual,
+    categoria: categoria,
+    descricao: descricao,
+    valor: valor
+  };
+
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    dados.push({ ID: payload.id, Data: data, Tipo: tipoAtual, Categoria: categoria, Descricao: descricao, Valor: valor });
+
+    document.getElementById('f-categoria').value = '';
+    document.getElementById('f-descricao').value = '';
+    document.getElementById('f-valor').value = '';
+    document.getElementById('f-data').value = new Date().toISOString().split('T')[0];
+
+    showToast('✅ Lançamento salvo!');
+    setTimeout(() => showPage('dashboard'), 800);
+  } catch(e) {
+    showToast('Erro ao salvar', true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Salvar Lançamento';
+  }
+}
+
+carregar();
+</script>
+</body>
+</html>
