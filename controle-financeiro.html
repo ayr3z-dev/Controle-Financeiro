@@ -51,7 +51,6 @@
     margin-top: 2px;
   }
 
-  /* NAV */
   nav {
     display: flex;
     background: var(--surface);
@@ -82,11 +81,9 @@
     border-bottom-color: var(--accent);
   }
 
-  /* PAGES */
   .page { display: none; padding: 16px; }
   .page.active { display: block; }
 
-  /* CARDS RESUMO */
   .resumo-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -121,15 +118,10 @@
 
   .card.receita .valor { color: var(--accent); }
   .card.despesa .valor { color: var(--accent2); }
-
-  .card.saldo .valor {
-    font-size: 1.6rem;
-  }
-
+  .card.saldo .valor { font-size: 1.6rem; }
   .card.saldo.positivo .valor { color: var(--accent); }
   .card.saldo.negativo .valor { color: var(--accent2); }
 
-  /* GRÁFICO */
   .grafico-wrap {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -148,9 +140,7 @@
     margin-bottom: 14px;
   }
 
-  .barra-item {
-    margin-bottom: 10px;
-  }
+  .barra-item { margin-bottom: 10px; }
 
   .barra-label {
     display: flex;
@@ -165,6 +155,8 @@
     font-weight: 700;
     color: var(--accent);
   }
+
+  .barra-label.despesa-label span:last-child { color: var(--accent2); }
 
   .barra-track {
     background: var(--surface2);
@@ -182,7 +174,6 @@
 
   .barra-fill.despesa { background: var(--accent2); }
 
-  /* MÊS SELETOR */
   .mes-selector {
     display: flex;
     align-items: center;
@@ -209,7 +200,6 @@
     padding: 4px 10px;
   }
 
-  /* LANÇAMENTOS LISTA */
   .lancamento-item {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -231,10 +221,7 @@
     margin-bottom: 2px;
   }
 
-  .lanc-desc {
-    font-size: 0.88rem;
-    font-weight: 500;
-  }
+  .lanc-desc { font-size: 0.88rem; font-weight: 500; }
 
   .lanc-data {
     font-size: 0.68rem;
@@ -251,7 +238,6 @@
   .lanc-valor.entrada { color: var(--accent); }
   .lanc-valor.saida { color: var(--accent2); }
 
-  /* FORMULÁRIO */
   .form-section {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -316,8 +302,7 @@
   }
 
   .field input,
-  .field select,
-  .field textarea {
+  .field select {
     width: 100%;
     background: var(--surface2);
     border: 1px solid var(--border);
@@ -332,14 +317,9 @@
   }
 
   .field input:focus,
-  .field select:focus,
-  .field textarea:focus {
-    border-color: var(--accent);
-  }
+  .field select:focus { border-color: var(--accent); }
 
-  .field select option {
-    background: var(--surface2);
-  }
+  .field select option { background: var(--surface2); }
 
   .btn-salvar {
     width: 100%;
@@ -360,7 +340,6 @@
   .btn-salvar:active { opacity: 0.8; }
   .btn-salvar:disabled { opacity: 0.4; cursor: default; }
 
-  /* TOAST */
   .toast {
     position: fixed;
     bottom: 100px;
@@ -380,56 +359,8 @@
     white-space: nowrap;
   }
 
-  .toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-
-  .toast.erro {
-    background: var(--accent2);
-    color: #fff;
-  }
-
-  /* BOTTOM NAV */
-  .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    display: flex;
-    padding: 8px 0 16px;
-    z-index: 100;
-  }
-
-  .bottom-nav button {
-    flex: 1;
-    background: none;
-    border: none;
-    color: var(--muted);
-    font-size: 0.6rem;
-    font-family: 'Syne', sans-serif;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    padding: 6px 0;
-    transition: color 0.2s;
-  }
-
-  .bottom-nav button svg {
-    width: 22px;
-    height: 22px;
-  }
-
-  .bottom-nav button.active {
-    color: var(--accent);
-  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.erro { background: var(--accent2); color: #fff; }
 
   .empty-state {
     text-align: center;
@@ -438,10 +369,7 @@
     font-size: 0.85rem;
   }
 
-  .empty-state div {
-    font-size: 2rem;
-    margin-bottom: 10px;
-  }
+  .empty-state div { font-size: 2rem; margin-bottom: 10px; }
 
   .loading {
     text-align: center;
@@ -479,16 +407,13 @@
   <button onclick="showPage('novo')">+ Novo</button>
 </nav>
 
-<!-- DASHBOARD -->
 <div id="page-dashboard" class="page active">
   <div style="height:12px"></div>
-
   <div class="mes-selector">
     <button onclick="mudarMes(-1)">‹</button>
     <span id="mes-label">—</span>
     <button onclick="mudarMes(1)">›</button>
   </div>
-
   <div class="resumo-grid">
     <div class="card receita">
       <label>Entradas</label>
@@ -503,42 +428,34 @@
       <div class="valor" id="total-saldo">R$ 0,00</div>
     </div>
   </div>
-
   <div class="grafico-wrap">
     <div class="grafico-titulo">📊 Despesas por Categoria</div>
     <div id="grafico-despesas"><div class="loading">Carregando...</div></div>
   </div>
-
   <div class="grafico-wrap">
     <div class="grafico-titulo">📈 Receitas por Categoria</div>
     <div id="grafico-receitas"><div class="loading">Carregando...</div></div>
   </div>
 </div>
 
-<!-- LANÇAMENTOS -->
 <div id="page-lancamentos" class="page">
   <div style="height:12px"></div>
-
   <div class="mes-selector">
     <button onclick="mudarMes(-1)">‹</button>
     <span id="mes-label2">—</span>
     <button onclick="mudarMes(1)">›</button>
   </div>
-
   <div id="lista-lancamentos"><div class="loading">Carregando...</div></div>
 </div>
 
-<!-- NOVO LANÇAMENTO -->
 <div id="page-novo" class="page">
   <div style="height:12px"></div>
   <div class="form-section">
     <h3>Novo Lançamento</h3>
-
     <div class="tipo-toggle">
       <button class="tipo-btn entrada active" onclick="setTipo('Entrada')">⬆ Entrada</button>
       <button class="tipo-btn saida" onclick="setTipo('Saída')">⬇ Saída</button>
     </div>
-
     <div class="field">
       <label>Categoria</label>
       <select id="f-categoria">
@@ -551,22 +468,18 @@
         <option>Custos Administrativos</option>
       </select>
     </div>
-
     <div class="field">
       <label>Descrição</label>
       <input type="text" id="f-descricao" placeholder="Ex: Pagamento fornecedor...">
     </div>
-
     <div class="field">
       <label>Valor (R$)</label>
       <input type="number" id="f-valor" placeholder="0,00" step="0.01" min="0" inputmode="decimal">
     </div>
-
     <div class="field">
       <label>Data</label>
       <input type="date" id="f-data">
     </div>
-
     <button class="btn-salvar" id="btn-salvar" onclick="salvar()">Salvar Lançamento</button>
   </div>
 </div>
@@ -575,7 +488,7 @@
 
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbweir7mm6cWsopmAVZpWbTDSgIdSHvhz_KMHtF3DRxtRvAPUKzm1ctLnL30Q8Q7QbgB/exec";
-
+const SENHA = "cachorrovagabundo";
 const MESES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 
 let dados = [];
@@ -583,7 +496,6 @@ let tipoAtual = "Entrada";
 let mesFiltro = new Date().getMonth();
 let anoFiltro = new Date().getFullYear();
 
-// Inicializa data de hoje
 document.getElementById('f-data').value = new Date().toISOString().split('T')[0];
 
 function showPage(page) {
@@ -653,21 +565,17 @@ function renderGrafico(elId, items, tipo) {
     el.innerHTML = '<div class="empty-state"><div>📭</div>Nenhum registro</div>';
     return;
   }
-
   const soma = {};
   items.forEach(d => {
     const cat = d.Categoria || 'Outros';
     soma[cat] = (soma[cat] || 0) + Number(d.Valor || 0);
   });
-
   const max = Math.max(...Object.values(soma));
   const sorted = Object.entries(soma).sort((a,b) => b[1]-a[1]);
-
   el.innerHTML = sorted.map(([cat, val]) => `
     <div class="barra-item">
-      <div class="barra-label">
-        <span>${cat}</span>
-        <span>${fmt(val)}</span>
+      <div class="barra-label ${tipo === 'despesa' ? 'despesa-label' : ''}">
+        <span>${cat}</span><span>${fmt(val)}</span>
       </div>
       <div class="barra-track">
         <div class="barra-fill ${tipo}" style="width:${(val/max*100).toFixed(1)}%"></div>
@@ -682,7 +590,6 @@ function renderLista(mes) {
     el.innerHTML = '<div class="empty-state"><div>📭</div>Nenhum lançamento neste mês</div>';
     return;
   }
-
   const sorted = [...mes].sort((a,b) => new Date(b.Data) - new Date(a.Data));
   el.innerHTML = sorted.map(d => {
     const dt = new Date(d.Data + 'T12:00:00');
@@ -711,8 +618,9 @@ function showToast(msg, erro = false) {
 
 async function carregar() {
   try {
-    const res = await fetch(SCRIPT_URL);
+    const res = await fetch(SCRIPT_URL + '?senha=' + SENHA);
     const json = await res.json();
+    if (json.error) { showToast('Acesso negado', true); return; }
     dados = Array.isArray(json) ? json : [];
     renderTudo();
   } catch(e) {
@@ -737,6 +645,7 @@ async function salvar() {
 
   const payload = {
     action: 'add',
+    senha: SENHA,
     id: Date.now().toString(),
     data: data,
     tipo: tipoAtual,
